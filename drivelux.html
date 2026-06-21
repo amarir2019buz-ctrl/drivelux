@@ -1,0 +1,1042 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DriveLux</title>
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Inter:wght@400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:        #0D0F12;
+      --surface:   #1A1D22;
+      --surface-2: #20242A;
+      --border:    #2E333B;
+      --text:      #ECEDEF;
+      --muted:     #9BA1AB;
+      --red:       #FF3B30;
+      --red-dim:   #5C1814;
+      --green:     #2ED874;
+      --wa:        #25D366;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      background-image:
+        radial-gradient(circle at 15% 8%, rgba(255,59,48,0.06), transparent 40%),
+        repeating-linear-gradient(135deg, rgba(255,255,255,0.012) 0px, rgba(255,255,255,0.012) 1px, transparent 1px, transparent 14px);
+    }
+
+    .mono { font-family: 'Space Mono', monospace; }
+
+    /* COUNTDOWN */
+    .countdown-bar {
+      background: var(--red-dim);
+      border-bottom: 1px solid rgba(255,59,48,0.3);
+      color: #FFD4D0;
+      text-align: center;
+      padding: 9px 16px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      letter-spacing: 0.3px;
+    }
+    .countdown-timer {
+      font-family: 'Space Mono', monospace;
+      background: var(--red);
+      color: #18090a;
+      font-size: 0.95rem;
+      font-weight: 700;
+      padding: 2px 10px;
+      border-radius: 4px;
+      letter-spacing: 1px;
+    }
+
+    /* HEADER */
+    header {
+      background: rgba(13,15,18,0.92);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--border);
+      padding: 14px 20px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    header .inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .logo {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 1.55rem;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+    .logo .drive { color: var(--text); }
+    .logo .lux   { color: var(--red); }
+
+    .lang-switcher {
+      display: flex;
+      gap: 2px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 3px;
+    }
+    .lang-btn {
+      background: none;
+      border: none;
+      border-radius: 4px;
+      padding: 5px 10px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      font-family: 'Space Mono', monospace;
+      color: var(--muted);
+      cursor: pointer;
+      letter-spacing: 0.5px;
+      transition: background 0.15s, color 0.15s;
+    }
+    .lang-btn.active { background: var(--red); color: #18090a; }
+
+    /* WHATSAPP FLOAT */
+    .wa-float {
+      position: fixed;
+      bottom: 22px;
+      left: 22px;
+      z-index: 200;
+      background: var(--wa);
+      color: #fff;
+      border: none;
+      border-radius: 50px;
+      padding: 13px 18px;
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      font-family: 'Inter', sans-serif;
+      cursor: pointer;
+      box-shadow: 0 4px 24px rgba(37,211,102,0.35);
+      text-decoration: none;
+      transition: transform 0.15s;
+    }
+    .wa-float:hover { transform: scale(1.05); }
+    .wa-float .wa-label { white-space: nowrap; }
+
+    /* PAGE WRAPPER */
+    .page-wrapper { max-width: 1100px; margin: 0 auto; padding: 0 16px; }
+
+    /* PRODUCT HERO */
+    .product-hero {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      margin: 16px 0;
+      border-radius: 14px;
+      overflow: hidden;
+    }
+    .product-image {
+      width: 100%;
+      aspect-ratio: 4/3;
+      background:
+        radial-gradient(circle at 30% 20%, rgba(255,59,48,0.10), transparent 55%),
+        linear-gradient(160deg, #14171B 0%, #1E2127 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 5rem;
+      position: relative;
+      border-bottom: 1px solid var(--border);
+    }
+    .product-image::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: repeating-linear-gradient(90deg, transparent, transparent 38px, rgba(255,255,255,0.025) 38px, rgba(255,255,255,0.025) 39px);
+    }
+    .badge-new {
+      position: absolute;
+      top: 14px;
+      right: 14px;
+      background: var(--red);
+      color: #18090a;
+      font-family: 'Space Mono', monospace;
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      padding: 4px 10px;
+      border-radius: 4px;
+      z-index: 1;
+    }
+    .product-info { padding: 22px; }
+    .product-category {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.68rem;
+      font-weight: 700;
+      color: var(--red);
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      margin-bottom: 8px;
+    }
+    .product-name {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 1.7rem;
+      font-weight: 700;
+      line-height: 1.15;
+      margin-bottom: 10px;
+      letter-spacing: 0.2px;
+    }
+    .product-desc {
+      font-size: 0.88rem;
+      color: var(--muted);
+      line-height: 1.65;
+      margin-bottom: 18px;
+    }
+    .price-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+    }
+    .price-main {
+      font-family: 'Space Mono', monospace;
+      font-size: 1.9rem;
+      font-weight: 700;
+      color: var(--red);
+    }
+    .price-main small { font-size: 0.95rem; font-weight: 700; }
+    .price-old {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.95rem;
+      color: var(--muted);
+      text-decoration: line-through;
+    }
+    .price-save {
+      background: rgba(255,59,48,0.12);
+      border: 1px solid rgba(255,59,48,0.3);
+      color: #FF7A70;
+      font-family: 'Space Mono', monospace;
+      font-size: 0.68rem;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 4px;
+    }
+    .delivery-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      background: rgba(46,216,116,0.10);
+      border: 1px solid rgba(46,216,116,0.25);
+      color: var(--green);
+      font-size: 0.78rem;
+      font-weight: 600;
+      padding: 6px 12px;
+      border-radius: 6px;
+    }
+
+    /* GARANTIE */
+    .garantie-row {
+      display: flex;
+      gap: 8px;
+      margin: 12px 0 0;
+      flex-wrap: wrap;
+    }
+    .garantie-badge {
+      flex: 1;
+      min-width: 120px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 11px 12px;
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      font-size: 0.76rem;
+      font-weight: 600;
+      color: var(--text);
+    }
+    .garantie-badge .g-icon { font-size: 1.15rem; flex-shrink: 0; filter: grayscale(0.3); }
+
+    /* AVIS */
+    .avis-section { margin: 22px 0 0; }
+    .avis-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 13px;
+    }
+    .avis-title {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 1.1rem;
+      font-weight: 700;
+      letter-spacing: 0.3px;
+    }
+    .avis-score {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--muted);
+      font-family: 'Space Mono', monospace;
+    }
+    .avis-score .stars { color: var(--red); font-size: 0.85rem; }
+    .avis-grid { display: flex; flex-direction: column; gap: 10px; }
+    .avis-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 15px;
+    }
+    .avis-top { display: flex; align-items: center; gap: 10px; margin-bottom: 9px; }
+    .avis-avatar {
+      width: 36px; height: 36px;
+      border-radius: 8px;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 1rem; color: var(--red); font-weight: 700;
+      flex-shrink: 0;
+    }
+    .avis-name { font-size: 0.85rem; font-weight: 700; }
+    .avis-city { font-size: 0.7rem; color: var(--muted); font-family: 'Space Mono', monospace; }
+    .avis-stars { color: var(--red); font-size: 0.82rem; margin-bottom: 7px; }
+    .avis-text { font-size: 0.82rem; color: var(--muted); line-height: 1.55; }
+    .avis-verified { font-size: 0.68rem; color: var(--green); font-weight: 700; margin-top: 8px; font-family: 'Space Mono', monospace; }
+
+    /* ORDER FORM */
+    .order-section { margin: 16px 0 0; padding-bottom: 80px; }
+    .section-title {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 1.2rem;
+      font-weight: 700;
+      letter-spacing: 0.3px;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .section-title .dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: var(--red);
+      box-shadow: 0 0 8px var(--red);
+    }
+    .section-title::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+    .form-group { margin-bottom: 14px; }
+    label { display: block; font-size: 0.8rem; font-weight: 600; color: var(--text); margin-bottom: 7px; }
+    label .req { color: var(--red); margin-right: 2px; }
+
+    input, textarea, select {
+      width: 100%;
+      background: var(--surface);
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      padding: 13px 16px;
+      font-size: 0.95rem;
+      font-family: 'Inter', sans-serif;
+      color: var(--text);
+      transition: border-color 0.2s, box-shadow 0.2s;
+      outline: none;
+    }
+    input::placeholder, textarea::placeholder { color: #5C636E; }
+    input:focus, textarea:focus, select:focus {
+      border-color: var(--red);
+      box-shadow: 0 0 0 3px rgba(255,59,48,0.12);
+    }
+    input.error, textarea.error { border-color: #FF3B30; }
+    input.valid-input { border-color: var(--green); box-shadow: 0 0 0 3px rgba(46,216,116,0.10); }
+    .field-hint { font-size: 0.72rem; color: var(--muted); margin-top: 5px; }
+    textarea { resize: none; min-height: 80px; }
+    select { color-scheme: dark; }
+
+    /* QTY */
+    .qty-row {
+      display: flex;
+      align-items: center;
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+      background: var(--surface);
+      width: fit-content;
+    }
+    .qty-btn {
+      background: none; border: none;
+      width: 46px; height: 46px;
+      font-size: 1.3rem; font-weight: 700;
+      color: var(--red); cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: background 0.15s;
+    }
+    .qty-btn:hover { background: var(--surface-2); }
+    .qty-val {
+      min-width: 42px; text-align: center;
+      font-family: 'Space Mono', monospace;
+      font-size: 1rem; font-weight: 700;
+      border-left: 1px solid var(--border);
+      border-right: 1px solid var(--border);
+      padding: 0 8px; line-height: 46px;
+    }
+
+    /* SUMMARY */
+    .order-summary {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 16px;
+    }
+    .summary-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.85rem;
+      color: var(--muted);
+      margin-bottom: 9px;
+      font-family: 'Space Mono', monospace;
+    }
+    .summary-total {
+      display: flex;
+      justify-content: space-between;
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--text);
+      border-top: 1px solid var(--border);
+      padding-top: 11px;
+      margin-top: 4px;
+    }
+    .summary-total .total-price { color: var(--red); font-family: 'Space Mono', monospace; }
+
+    /* COD */
+    .cod-badge {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: rgba(46,216,116,0.07);
+      border: 1px solid rgba(46,216,116,0.25);
+      border-radius: 12px;
+      padding: 14px 16px;
+      margin-bottom: 18px;
+    }
+    .cod-icon { font-size: 1.7rem; flex-shrink: 0; }
+    .cod-text strong { display: block; font-size: 0.9rem; font-weight: 700; color: var(--green); margin-bottom: 2px; }
+    .cod-text span { font-size: 0.76rem; color: #8FBFA0; }
+
+    /* SUBMIT — ignition button signature */
+    .btn-order {
+      width: 100%;
+      background: var(--red);
+      color: #18090a;
+      border: none;
+      border-radius: 14px;
+      padding: 18px;
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 1.15rem;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      transition: transform 0.15s, box-shadow 0.15s;
+      box-shadow: 0 4px 24px rgba(255,59,48,0.35);
+      position: relative;
+      overflow: hidden;
+    }
+    .btn-order .ignition-dot {
+      width: 9px; height: 9px;
+      border-radius: 50%;
+      background: #18090a;
+      animation: ignition-pulse 1.6s ease-in-out infinite;
+    }
+    @keyframes ignition-pulse {
+      0%, 100% { opacity: 0.35; box-shadow: 0 0 0 rgba(24,9,10,0); }
+      50%      { opacity: 1;    box-shadow: 0 0 10px rgba(24,9,10,0.4); }
+    }
+    .btn-order:hover { transform: translateY(-1px); box-shadow: 0 6px 28px rgba(255,59,48,0.45); }
+    .btn-order:active { transform: scale(0.98); }
+    .btn-order:disabled { background: #3A3F47; color: var(--muted); box-shadow: none; cursor: not-allowed; }
+    .btn-order:disabled .ignition-dot { animation: none; }
+
+    /* SUCCESS */
+    .success-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.7);
+      z-index: 999;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .success-overlay.show { display: flex; }
+    .success-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 32px 24px;
+      text-align: center;
+      max-width: 340px;
+      width: 100%;
+      animation: pop-in 0.35s cubic-bezier(0.34,1.56,0.64,1);
+    }
+    @keyframes pop-in { from { transform: scale(0.85); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+    .success-icon {
+      width: 68px; height: 68px;
+      background: rgba(46,216,116,0.12);
+      border: 1px solid rgba(46,216,116,0.3);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 2rem;
+      margin: 0 auto 16px;
+    }
+    .success-card h2 { font-family: 'Rajdhani', sans-serif; font-size: 1.3rem; font-weight: 700; margin-bottom: 8px; }
+    .success-card p { font-size: 0.86rem; color: var(--muted); line-height: 1.6; margin-bottom: 18px; }
+    .success-wa-btn {
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      width: 100%;
+      background: var(--wa); color: #fff; border: none;
+      border-radius: 10px; padding: 13px;
+      font-size: 0.92rem; font-weight: 700;
+      font-family: 'Inter', sans-serif;
+      cursor: pointer; text-decoration: none; margin-bottom: 10px;
+    }
+    .btn-close-success {
+      background: none; color: var(--muted);
+      border: 1px solid var(--border);
+      border-radius: 10px; padding: 10px 24px;
+      font-size: 0.86rem; font-weight: 600;
+      font-family: 'Inter', sans-serif;
+      cursor: pointer; width: 100%;
+    }
+
+    footer {
+      text-align: center;
+      padding: 24px 0 32px;
+      font-size: 0.72rem;
+      color: #5C636E;
+      font-family: 'Space Mono', monospace;
+    }
+
+    @media (max-width: 400px) {
+      .product-name { font-size: 1.4rem; }
+      .price-main { font-size: 1.65rem; }
+    }
+
+    /* DESKTOP */
+    @media (min-width: 768px) {
+      .desktop-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 28px;
+        align-items: start;
+        padding: 28px 0 60px;
+      }
+      .product-hero { margin: 0; position: sticky; top: 80px; }
+      .product-image { aspect-ratio: 1/1; font-size: 7rem; }
+      .product-name { font-size: 1.9rem; }
+      .price-main { font-size: 2.3rem; }
+      .order-section { margin: 0; padding-bottom: 0; }
+      .garantie-row, .avis-section { grid-column: 1 / -1; }
+      .avis-grid { flex-direction: row; flex-wrap: wrap; }
+      .avis-card { flex: 1; min-width: 200px; }
+      header .inner { max-width: 1100px; margin: 0 auto; }
+    }
+    @media (min-width: 1100px) {
+      .desktop-grid { gap: 40px; }
+      .product-info { padding: 28px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- COUNTDOWN BAR -->
+<div class="countdown-bar">
+  <span>⏱</span>
+  <span data-i18n="cd_text">العرض ينتهي خلال</span>
+  <span class="countdown-timer mono" id="cdTimer">00:00:00</span>
+</div>
+
+<!-- HEADER -->
+<header>
+  <div class="inner">
+    <div class="logo"><span class="drive">Drive</span><span class="lux">Lux</span></div>
+    <div class="lang-switcher">
+      <button class="lang-btn" onclick="setLang('fr')">FR</button>
+      <button class="lang-btn active" onclick="setLang('ar')">AR</button>
+      <button class="lang-btn" onclick="setLang('en')">EN</button>
+    </div>
+  </div>
+</header>
+
+<!-- WHATSAPP FLOATING BUTTON -->
+<a id="waFloat" class="wa-float" href="https://wa.me/212777318753" target="_blank">
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg">
+    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+  </svg>
+  <span class="wa-label" data-i18n="wa_label">تواصل معنا</span>
+</a>
+
+<div class="page-wrapper">
+<div class="desktop-grid">
+
+<!-- PRODUCT HERO -->
+<div class="product-hero">
+  <div class="product-image" style="background-image:url('images/led-product.jpg');background-size:cover;background-position:center;">
+    <div class="badge-new" data-i18n="badge_new">جديد</div>
+  </div>
+  <div class="product-info">
+    <div class="product-category" data-i18n="best_seller">⚡ الأكثر مبيعاً</div>
+    <h1 class="product-name" data-i18n="product_name">إضاءة LED داخلية للسيارة</h1>
+    <p class="product-desc" data-i18n="product_desc">أضف لمسة عصرية لسيارتك — إضاءة RGB قابلة للتحكم بالتطبيق، تركيب سهل بدون أدوات، تدوم طويلاً.</p>
+    <div class="price-row">
+      <div class="price-main mono"><small data-i18n="currency">د.م </small>199</div>
+      <div class="price-old mono">299 <span data-i18n="currency">د.م</span></div>
+      <div class="price-save" data-i18n="save_pct">وفر 33%</div>
+    </div>
+    <div class="delivery-tag">✓ <span data-i18n="cod_short">الدفع عند الاستلام</span></div>
+  </div>
+</div>
+
+<!-- FORM -->
+<div class="order-section">
+  <div class="section-title"><span class="dot"></span> <span data-i18n="order_now">اطلب الآن</span></div>
+
+  <div class="form-group">
+    <label data-i18n="qty_label">الكمية</label>
+    <div class="qty-row">
+      <button class="qty-btn" onclick="changeQty(-1)">−</button>
+      <div class="qty-val" id="qtyVal">1</div>
+      <button class="qty-btn" onclick="changeQty(1)">+</button>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label><span class="req">*</span> <span data-i18n="phone_label">رقم الهاتف</span></label>
+    <input type="tel" id="phone" placeholder="0612345678" maxlength="10" inputmode="tel" dir="ltr" oninput="validatePhoneLive(this)">
+    <div class="field-hint" id="phoneHint" data-i18n="phone_hint">سنتصل بك لتأكيد الطلب</div>
+  </div>
+
+  <div class="form-group">
+    <label><span class="req">*</span> <span data-i18n="address_label">عنوان التوصيل</span></label>
+    <textarea id="address" data-i18n-placeholder="address_placeholder"></textarea>
+  </div>
+
+  <div class="form-group">
+    <label data-i18n="city_label">المدينة</label>
+    <select id="city">
+      <option value="" data-i18n="city_select">— اختر مدينتك —</option>
+      <option>الدار البيضاء / Casablanca</option>
+      <option>الرباط / Rabat</option>
+      <option>سلا / Salé</option>
+      <option>تمارة / Témara</option>
+      <option>مراكش / Marrakech</option>
+      <option>فاس / Fès</option>
+      <option>مكناس / Meknès</option>
+      <option>طنجة / Tanger</option>
+      <option>أكادير / Agadir</option>
+      <option>وجدة / Oujda</option>
+      <option>القنيطرة / Kénitra</option>
+      <option>أخرى / Autre / Other</option>
+    </select>
+  </div>
+
+  <div class="form-group">
+    <label data-i18n="note_label">ملاحظة (اختياري)</label>
+    <input type="text" id="note" data-i18n-placeholder="note_placeholder">
+  </div>
+
+  <div class="order-summary">
+    <div class="summary-row">
+      <span id="summaryQtyLabel">المنتج × 1</span>
+      <span id="summarySubtotal">199 د.م</span>
+    </div>
+    <div class="summary-row">
+      <span data-i18n="delivery_label">التوصيل</span>
+      <span style="color:var(--green);font-weight:700;" data-i18n="free_delivery">مجاني</span>
+    </div>
+    <div class="summary-total">
+      <span data-i18n="total_label">الإجمالي</span>
+      <span class="total-price" id="summaryTotal">199 د.م</span>
+    </div>
+  </div>
+
+  <div class="cod-badge">
+    <div class="cod-icon">💵</div>
+    <div class="cod-text">
+      <strong data-i18n="cod_title">الدفع عند الاستلام</strong>
+      <span data-i18n="cod_desc">لا تدفع إلا عندما يصلك المنتج بين يديك</span>
+    </div>
+  </div>
+
+  <button class="btn-order" id="btnOrder" onclick="submitOrder()">
+    <span class="ignition-dot"></span>
+    <span data-i18n="confirm_btn">تأكيد الطلب الآن</span>
+  </button>
+</div>
+
+<!-- GARANTIE BADGES -->
+<div class="garantie-row">
+  <div class="garantie-badge">
+    <span class="g-icon">↩️</span>
+    <span data-i18n="gar_return">إرجاع مجاني 7 أيام</span>
+  </div>
+  <div class="garantie-badge">
+    <span class="g-icon">🔒</span>
+    <span data-i18n="gar_secure">دفع آمن 100%</span>
+  </div>
+  <div class="garantie-badge">
+    <span class="g-icon">🚚</span>
+    <span data-i18n="gar_delivery">توصيل سريع</span>
+  </div>
+</div>
+
+<!-- AVIS CLIENTS -->
+<div class="avis-section">
+  <div class="avis-header">
+    <div class="avis-title" data-i18n="avis_title">آراء العملاء</div>
+    <div class="avis-score"><span class="stars">★★★★★</span> <span>4.9 (127)</span></div>
+  </div>
+  <div class="avis-grid">
+    <div class="avis-card">
+      <div class="avis-top">
+        <div class="avis-avatar">ف</div>
+        <div><div class="avis-name">فاطمة الزهراء</div><div class="avis-city">الدار البيضاء</div></div>
+      </div>
+      <div class="avis-stars">★★★★★</div>
+      <div class="avis-text" data-i18n="avis1">المنتج وصل بسرعة وجودته ممتازة، ما توقعتش يكون هكذا! شكرا DriveLux 🙏</div>
+      <div class="avis-verified">✓ مشتري موثق</div>
+    </div>
+    <div class="avis-card">
+      <div class="avis-top">
+        <div class="avis-avatar">ي</div>
+        <div><div class="avis-name">يوسف العمراني</div><div class="avis-city">مراكش</div></div>
+      </div>
+      <div class="avis-stars">★★★★★</div>
+      <div class="avis-text" data-i18n="avis2">الدفع عند الاستلام هو اللي خاني نشري، ما خسرتش والو. سيتصلو بيا وتوصلت فـ يومين ✨</div>
+      <div class="avis-verified">✓ مشتري موثق</div>
+    </div>
+    <div class="avis-card">
+      <div class="avis-top">
+        <div class="avis-avatar">س</div>
+        <div><div class="avis-name">سلمى بنعلي</div><div class="avis-city">الرباط</div></div>
+      </div>
+      <div class="avis-stars">★★★★☆</div>
+      <div class="avis-text" data-i18n="avis3">خدمة ممتازة، التوصيل جا في الوقت. راح نشري مرة أخرى بلا شك 👍</div>
+      <div class="avis-verified">✓ مشتري موثق</div>
+    </div>
+  </div>
+</div>
+
+</div></div><!-- /desktop-grid /page-wrapper -->
+
+<footer>
+  <span data-i18n="footer_text">© DriveLux 2024 · الدفع عند الاستلام · توصيل لجميع مدن المغرب</span>
+</footer>
+
+<!-- SUCCESS OVERLAY -->
+<div class="success-overlay" id="successOverlay">
+  <div class="success-card">
+    <div class="success-icon">✓</div>
+    <h2 data-i18n="success_title">تم استلام طلبك! 🎉</h2>
+    <p id="successMsg">شكراً! سنتصل بك خلال 24 ساعة.</p>
+    <a id="waSuccessBtn" class="success-wa-btn" href="#" target="_blank">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+      <span data-i18n="wa_confirm">تأكيد عبر واتساب</span>
+    </a>
+    <button class="btn-close-success" onclick="closeSuccess()" data-i18n="success_btn">متابعة التسوق</button>
+  </div>
+</div>
+
+<script>
+const PRICE    = 199;
+const WA_NUM   = '212777318753';
+const SHEET_URL = 'https://script.google.com/macros/s/AKfycbyyMhXDpuG9X-3Sa2QsjwuOiiVnwXHIRo2IQwLCIiBOCU1whe6xH3PWch_xMo9xXjlg/exec';
+let qty = 1;
+let currentLang = 'ar';
+
+const i18n = {
+  ar: {
+    dir: 'rtl', lang: 'ar',
+    badge_new: 'جديد', best_seller: '⚡ الأكثر مبيعاً',
+    product_name: 'إضاءة LED داخلية للسيارة',
+    product_desc: 'أضف لمسة عصرية لسيارتك — إضاءة RGB قابلة للتحكم بالتطبيق، تركيب سهل بدون أدوات، تدوم طويلاً.',
+    currency: 'د.م', save_pct: 'وفر 33%', cod_short: 'الدفع عند الاستلام',
+    order_now: 'اطلب الآن', qty_label: 'الكمية',
+    phone_label: 'رقم الهاتف', phone_hint: 'سنتصل بك لتأكيد الطلب',
+    address_label: 'عنوان التوصيل',
+    address_placeholder: 'مثال: حي السلام، شارع محمد الخامس، مراكش...',
+    city_label: 'المدينة', city_select: '— اختر مدينتك —',
+    note_label: 'ملاحظة (اختياري)', note_placeholder: 'أي تفاصيل إضافية...',
+    delivery_label: 'التوصيل', free_delivery: 'مجاني', total_label: 'الإجمالي',
+    cod_title: 'الدفع عند الاستلام', cod_desc: 'لا تدفع إلا عندما يصلك المنتج بين يديك',
+    confirm_btn: 'تأكيد الطلب الآن',
+    footer_text: '© DriveLux 2024 · الدفع عند الاستلام · توصيل لجميع مدن المغرب',
+    success_title: 'تم استلام طلبك! 🎉',
+    success_msg: 'شكراً! سنتصل بك على <strong>{phone}</strong> خلال 24 ساعة.',
+    success_btn: 'متابعة التسوق',
+    wa_label: 'تواصل معنا', wa_confirm: 'تأكيد عبر واتساب',
+    wa_msg: 'مرحباً، أريد تأكيد طلبي:\n📦 المنتج: {product}\n🔢 الكمية: {qty}\n📞 الهاتف: {phone}\n📍 العنوان: {address}',
+    cd_text: 'العرض ينتهي خلال',
+    gar_return: 'إرجاع مجاني 7 أيام', gar_secure: 'دفع آمن 100%', gar_delivery: 'توصيل سريع',
+    avis_title: 'آراء العملاء',
+    avis1: 'المنتج وصل بسرعة وجودته ممتازة، ما توقعتش يكون هكذا! شكرا DriveLux 🙏',
+    avis2: 'الدفع عند الاستلام هو اللي خاني نشري، ما خسرتش والو. سيتصلو بيا وتوصلت فـ يومين ✨',
+    avis3: 'خدمة ممتازة، التوصيل جا في الوقت. راح نشري مرة أخرى بلا شك 👍',
+    product_x: 'المنتج × ', loading: 'جاري الإرسال...',
+    phone_error: '❌ رقم غير صحيح — خاصو يبدا بـ 06 أو 07 و10 أرقام',
+  },
+  fr: {
+    dir: 'ltr', lang: 'fr',
+    badge_new: 'Nouveau', best_seller: '⚡ Meilleure vente',
+    product_name: 'Éclairage LED intérieur voiture',
+    product_desc: "Ajoutez une touche moderne à votre voiture — LED RGB contrôlable par appli, installation facile sans outils.",
+    currency: 'MAD', save_pct: 'Économisez 33%', cod_short: 'Paiement à la livraison',
+    order_now: 'Commander maintenant', qty_label: 'Quantité',
+    phone_label: 'Numéro de téléphone', phone_hint: 'Nous vous appellerons pour confirmer',
+    address_label: 'Adresse de livraison',
+    address_placeholder: 'Ex: Quartier Al Amal, Rue Hassan II, Casablanca...',
+    city_label: 'Ville', city_select: '— Choisissez votre ville —',
+    note_label: 'Remarque (optionnel)', note_placeholder: 'Détails supplémentaires...',
+    delivery_label: 'Livraison', free_delivery: 'Gratuite', total_label: 'Total',
+    cod_title: 'Paiement à la livraison', cod_desc: 'Vous payez uniquement à la réception',
+    confirm_btn: 'Confirmer la commande',
+    footer_text: '© DriveLux 2024 · Paiement à la livraison · Livraison partout au Maroc',
+    success_title: 'Commande reçue ! 🎉',
+    success_msg: 'Merci ! Nous vous appellerons au <strong>{phone}</strong> dans les 24h.',
+    success_btn: 'Continuer mes achats',
+    wa_label: 'Nous contacter', wa_confirm: 'Confirmer via WhatsApp',
+    wa_msg: 'Bonjour, je souhaite confirmer ma commande:\n📦 Produit: {product}\n🔢 Quantité: {qty}\n📞 Téléphone: {phone}\n📍 Adresse: {address}',
+    cd_text: "L'offre expire dans",
+    gar_return: 'Retour gratuit 7 jours', gar_secure: 'Paiement 100% sécurisé', gar_delivery: 'Livraison rapide',
+    avis_title: 'Avis clients',
+    avis1: "Produit reçu rapidement, qualité excellente ! Je ne m'attendais pas à ça. Merci DriveLux 🙏",
+    avis2: "Le paiement à la livraison m'a convaincu. Livré en 2 jours, parfait ✨",
+    avis3: 'Service excellent, livraison dans les délais. Je recommande à 100% 👍',
+    product_x: 'Produit × ', loading: 'Envoi en cours...',
+    phone_error: '❌ Numéro invalide — doit commencer par 06 ou 07 (10 chiffres)',
+  },
+  en: {
+    dir: 'ltr', lang: 'en',
+    badge_new: 'New', best_seller: '⚡ Best Seller',
+    product_name: 'Car Interior LED Lighting',
+    product_desc: 'Give your car a modern touch — App-controlled RGB LED, easy tool-free installation, long-lasting.',
+    currency: 'MAD', save_pct: 'Save 33%', cod_short: 'Cash on Delivery',
+    order_now: 'Order Now', qty_label: 'Quantity',
+    phone_label: 'Phone Number', phone_hint: "We'll call you to confirm your order",
+    address_label: 'Delivery Address',
+    address_placeholder: 'E.g: Hay Salam, Avenue Mohammed V, Marrakech...',
+    city_label: 'City', city_select: '— Choose your city —',
+    note_label: 'Note (optional)', note_placeholder: 'Any additional details...',
+    delivery_label: 'Delivery', free_delivery: 'Free', total_label: 'Total',
+    cod_title: 'Cash on Delivery', cod_desc: 'Pay only when you receive your product',
+    confirm_btn: 'Confirm Order Now',
+    footer_text: '© DriveLux 2024 · Cash on Delivery · Shipping across Morocco',
+    success_title: 'Order Received! 🎉',
+    success_msg: 'Thank you! We will call you at <strong>{phone}</strong> within 24 hours.',
+    success_btn: 'Continue Shopping',
+    wa_label: 'Contact us', wa_confirm: 'Confirm via WhatsApp',
+    wa_msg: 'Hello, I want to confirm my order:\n📦 Product: {product}\n🔢 Quantity: {qty}\n📞 Phone: {phone}\n📍 Address: {address}',
+    cd_text: 'Offer expires in',
+    gar_return: 'Free return 7 days', gar_secure: '100% secure payment', gar_delivery: 'Fast delivery',
+    avis_title: 'Customer reviews',
+    avis1: 'Product arrived quickly, excellent quality! Did not expect this. Thank you DriveLux 🙏',
+    avis2: 'Cash on delivery convinced me to order. Delivered in 2 days, perfect ✨',
+    avis3: 'Excellent service, on-time delivery. Will definitely order again 👍',
+    product_x: 'Product × ', loading: 'Sending...',
+    phone_error: '❌ Invalid number — must start with 06 or 07 (10 digits)',
+  }
+};
+
+function setLang(lang) {
+  currentLang = lang;
+  const t = i18n[lang];
+  document.documentElement.lang = t.lang;
+  document.documentElement.dir = t.dir;
+  document.body.style.direction = t.dir;
+
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.getAttribute('data-i18n');
+    if (t[key] !== undefined) el.textContent = t[key];
+  });
+  document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+    const key = el.getAttribute('data-i18n-placeholder');
+    if (t[key] !== undefined) el.placeholder = t[key];
+  });
+  document.querySelectorAll('input:not([type=tel]), textarea, select').forEach(el => {
+    el.style.direction = t.dir;
+  });
+  document.querySelectorAll('.lang-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.textContent === lang.toUpperCase());
+  });
+
+  document.querySelector('.wa-label').textContent = t.wa_label;
+  updateSummary();
+}
+
+function changeQty(delta) {
+  qty = Math.max(1, Math.min(10, qty + delta));
+  updateSummary();
+}
+
+function updateSummary() {
+  const t = i18n[currentLang];
+  document.getElementById('qtyVal').textContent = qty;
+  const total = PRICE * qty;
+  document.getElementById('summaryQtyLabel').textContent = t.product_x + qty;
+  document.getElementById('summarySubtotal').textContent = total + ' ' + t.currency;
+  document.getElementById('summaryTotal').textContent = total + ' ' + t.currency;
+}
+
+function buildWaLink(phone, address) {
+  const t = i18n[currentLang];
+  const msg = t.wa_msg
+    .replace('{product}', t.product_name)
+    .replace('{qty}', qty)
+    .replace('{phone}', phone)
+    .replace('{address}', address);
+  return 'https://wa.me/' + WA_NUM + '?text=' + encodeURIComponent(msg);
+}
+
+function validatePhoneLive(input) {
+  input.value = input.value.replace(/[^0-9]/g, '');
+  const hint = document.getElementById('phoneHint');
+  const t = i18n[currentLang];
+  const val = input.value;
+  if (val.length === 0) {
+    input.classList.remove('error', 'valid-input');
+    hint.style.color = '';
+    hint.textContent = t.phone_hint;
+  } else if (/^0[67][0-9]{8}$/.test(val)) {
+    input.classList.remove('error');
+    input.classList.add('valid-input');
+    hint.style.color = '#2ED874';
+    hint.textContent = '✓ ' + val;
+  } else {
+    input.classList.remove('valid-input');
+    if (val.length === 10) {
+      input.classList.add('error');
+      hint.style.color = '#FF3B30';
+      hint.textContent = t.phone_error;
+    } else {
+      input.classList.remove('error');
+      hint.style.color = '';
+      hint.textContent = t.phone_hint;
+    }
+  }
+}
+
+function submitOrder() {
+  const phone   = document.getElementById('phone').value.trim();
+  const address = document.getElementById('address').value.trim();
+  let valid = true;
+
+  ['phone','address'].forEach(id => document.getElementById(id).classList.remove('error'));
+
+  const phoneRegex = /^0[67][0-9]{8}$/;
+  const phoneErr = document.getElementById('phoneHint');
+  const t = i18n[currentLang];
+  if (!phoneRegex.test(phone)) {
+    document.getElementById('phone').classList.add('error');
+    phoneErr.style.color = '#FF3B30';
+    phoneErr.textContent = t.phone_error;
+    document.getElementById('phone').focus();
+    valid = false;
+  } else {
+    phoneErr.style.color = '';
+    phoneErr.textContent = t.phone_hint;
+  }
+  if (!address || address.length < 10) {
+    document.getElementById('address').classList.add('error');
+    if (valid) document.getElementById('address').focus();
+    valid = false;
+  }
+  if (!valid) return;
+
+  const btn = document.getElementById('btnOrder');
+  btn.disabled = true;
+  btn.innerHTML = '<span>' + t.loading + '</span>';
+
+  const city  = document.getElementById('city').value;
+  const note  = document.getElementById('note').value.trim();
+  const total = PRICE * qty;
+
+  fetch(SHEET_URL, {
+    method: 'POST',
+    mode: 'no-cors',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ phone, address, city, qty, total, note, lang: currentLang })
+  }).catch(() => {});
+
+  setTimeout(() => {
+    const waLink = buildWaLink(phone, address);
+    document.getElementById('waSuccessBtn').href = waLink;
+    document.getElementById('successMsg').innerHTML = t.success_msg.replace('{phone}', phone);
+    document.getElementById('successOverlay').classList.add('show');
+    btn.disabled = false;
+    btn.innerHTML = '<span class="ignition-dot"></span><span>' + t.confirm_btn + '</span>';
+  }, 1400);
+}
+
+function closeSuccess() {
+  document.getElementById('successOverlay').classList.remove('show');
+  document.getElementById('phone').value = '';
+  document.getElementById('address').value = '';
+  document.getElementById('city').value = '';
+  document.getElementById('note').value = '';
+  qty = 1;
+  updateSummary();
+}
+
+function startCountdown() {
+  const DURATION = 2 * 60 * 60 * 1000;
+  const key = 'drivelux_cd_end';
+  let stored = sessionStorage.getItem(key);
+  let endTime;
+
+  if (stored) {
+    endTime = parseInt(stored, 10);
+    if (isNaN(endTime) || endTime <= Date.now()) {
+      endTime = Date.now() + DURATION;
+      sessionStorage.setItem(key, String(endTime));
+    }
+  } else {
+    endTime = Date.now() + DURATION;
+    sessionStorage.setItem(key, String(endTime));
+  }
+
+  function tick() {
+    const diff = endTime - Date.now();
+    if (diff <= 0) {
+      endTime = Date.now() + DURATION;
+      sessionStorage.setItem(key, String(endTime));
+    }
+    const total = Math.max(0, diff);
+    const h = Math.floor(total / 3600000);
+    const m = Math.floor((total % 3600000) / 60000);
+    const s = Math.floor((total % 60000) / 1000);
+    const el = document.getElementById('cdTimer');
+    if (el) el.textContent = String(h).padStart(2,'0') + ':' + String(m).padStart(2,'0') + ':' + String(s).padStart(2,'0');
+  }
+  tick();
+  setInterval(tick, 1000);
+}
+startCountdown();
+
+setLang('ar');
+</script>
+</body>
+</html>
